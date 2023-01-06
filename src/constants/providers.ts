@@ -64,6 +64,7 @@ export const RPC_PROVIDERS: { [key in SupportedChainId]: StaticJsonRpcProvider }
   [SupportedChainId.KOVAN]: new AppJsonRpcProvider(SupportedChainId.KOVAN),
   [SupportedChainId.OPTIMISM]: new AppJsonRpcProvider(SupportedChainId.OPTIMISM),
   [SupportedChainId.OPTIMISM_GOERLI]: new AppJsonRpcProvider(SupportedChainId.OPTIMISM_GOERLI),
+  [SupportedChainId.OPTIMISTIC_KOVAN]: new AppJsonRpcProvider(SupportedChainId.OPTIMISTIC_KOVAN),
   [SupportedChainId.ARBITRUM_ONE]: new AppJsonRpcProvider(SupportedChainId.ARBITRUM_ONE),
   [SupportedChainId.ARBITRUM_RINKEBY]: new AppJsonRpcProvider(SupportedChainId.ARBITRUM_RINKEBY),
   [SupportedChainId.POLYGON]: new AppJsonRpcProvider(SupportedChainId.POLYGON),

@@ -1,5 +1,5 @@
 /**
- * List of all the networks supported by the Uniswap Interface
+ * List of all the networks supported by the Thera ECOSYSTEM
  */
 export enum SupportedChainId {
   MAINNET = 1,
@@ -16,6 +16,8 @@ export enum SupportedChainId {
 
   POLYGON = 137,
   POLYGON_MUMBAI = 80001,
+
+  OPTIMISTIC_KOVAN = 69,
 
   CELO = 42220,
   CELO_ALFAJORES = 44787,
@@ -35,6 +37,7 @@ export const CHAIN_IDS_TO_NAMES = {
   [SupportedChainId.ARBITRUM_RINKEBY]: 'arbitrum_rinkeby',
   [SupportedChainId.OPTIMISM]: 'optimism',
   [SupportedChainId.OPTIMISM_GOERLI]: 'optimism_goerli',
+  [SupportedChainId.OPTIMISTIC_KOVAN]: 'optimism_kovan',
 }
 
 /**

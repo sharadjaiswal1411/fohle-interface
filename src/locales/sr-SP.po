@@ -877,7 +877,7 @@ msgid "Explore Uniswap Analytics."
 msgstr "Истражите Унисвап Аналитицс."
 
 #: src/components/Popups/FailedNetworkSwitchPopup.tsx
-msgid "Failed to switch networks from the Uniswap Interface. In order to use Uniswap on {0}, you must change the network in your wallet."
+msgid "Failed to switch networks from the Thera ECOSYSTEM. In order to use Uniswap on {0}, you must change the network in your wallet."
 msgstr "Пребацивање мреже са Унисвап интерфејса није успело. Да бисте користили Унисвап на {0}, морате променити мрежу у свом новчанику."
 
 #: src/components/NavBar/MenuDropdown.tsx
@@ -1957,7 +1957,7 @@ msgid "Top pools"
 msgstr "Врхунски фондови"
 
 #: src/pages/Tokens/index.tsx
-msgid "Top tokens on Uniswap"
+msgid "Top tokens on Thera ECOSYSTEM"
 msgstr "Најбољи токени на Унисвап-у"
 
 #: src/components/earn/PoolCard.tsx

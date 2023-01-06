@@ -1,4 +1,6 @@
-import styled, { keyframes } from 'styled-components/macro'
+import styled, { css, keyframes } from 'styled-components/macro'
+
+import v3 from '../../assets/images/whitev3.svg'
 
 const rotate = keyframes`
   from {
@@ -8,6 +10,85 @@ const rotate = keyframes`
     transform: rotate(360deg);
   }
 `
+const pulse = keyframes`
+  0% { transform: scale(1); }
+  60% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+`
+
+const AnimatedImg = styled.div`
+  animation: ${pulse} 800ms linear infinite;
+  & > * {
+    width: 72px;
+  }
+`
+
+const loadingAnimation = keyframes`
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+`
+
+export const LoadingRows = styled.div`
+  display: grid;
+  min-width: 75%;
+  max-width: 100%;
+  grid-column-gap: 0.5em;
+  grid-row-gap: 0.8em;
+  grid-template-columns: repeat(1, 1fr);
+  & > div {
+    animation: ${loadingAnimation} 1.5s infinite;
+    animation-fill-mode: both;
+    background: linear-gradient(
+      to left,
+      ${({ theme }) => theme.deprecated_bg1} 25%,
+      ${({ theme }) => theme.deprecated_bg1} 50%,
+      ${({ theme }) => theme.deprecated_bg1} 75%
+    );
+    background-size: 400%;
+    border-radius: 12px;
+    height: 2.4em;
+    will-change: background-position;
+  }
+  & > div:nth-child(4n + 1) {
+    grid-column: 1 / 3;
+  }
+  & > div:nth-child(4n) {
+    grid-column: 3 / 4;
+    margin-bottom: 2em;
+  }
+`
+
+const Wrapper = styled.div<{ fill: number; height?: string }>`
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: ${({ theme, fill }) => (fill ? 'black' : theme.deprecated_bg1)};
+  height: 100%;
+  width: 100%;
+  ${(props) =>
+    props.fill && !props.height
+      ? css`
+          height: 100vh;
+        `
+      : css`
+          height: 180px;
+        `}
+`
+
+export const LocalLoader = ({ fill }: { fill: boolean }) => {
+  return (
+    <Wrapper fill={fill ? 1 : 0}>
+      <AnimatedImg>
+        <img src={v3} alt="loading-icon" />
+      </AnimatedImg>
+    </Wrapper>
+  )
+}
 
 const StyledSVG = styled.svg<{ size: string; stroke?: string }>`
   animation: 2s ${rotate} linear infinite;

@@ -44,7 +44,6 @@ export function useSwapCallback({
   feeOptions,
 }: UseSwapCallbackArgs): UseSwapCallbackReturns {
   const { account, chainId, provider } = useWeb3React()
-
   const swapCalls = useSwapCallArguments(
     trade,
     allowedSlippage,
@@ -60,11 +59,17 @@ export function useSwapCallback({
 
   return useMemo(() => {
     if (!trade || !provider || !account || !chainId || !callback) {
-      return { state: SwapCallbackState.INVALID, error: <Trans>Missing dependencies</Trans> }
+      return {
+        state: SwapCallbackState.INVALID,
+        error: <Trans>Missing dependencies</Trans>,
+      }
     }
     if (!recipient) {
       if (recipientAddressOrName !== null) {
-        return { state: SwapCallbackState.INVALID, error: <Trans>Invalid recipient</Trans> }
+        return {
+          state: SwapCallbackState.INVALID,
+          error: <Trans>Invalid recipient</Trans>,
+        }
       } else {
         return { state: SwapCallbackState.LOADING }
       }

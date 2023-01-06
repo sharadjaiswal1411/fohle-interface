@@ -877,7 +877,7 @@ msgid "Explore Uniswap Analytics."
 msgstr "Jelajahi Uniswap Analytics."
 
 #: src/components/Popups/FailedNetworkSwitchPopup.tsx
-msgid "Failed to switch networks from the Uniswap Interface. In order to use Uniswap on {0}, you must change the network in your wallet."
+msgid "Failed to switch networks from the Thera ECOSYSTEM. In order to use Uniswap on {0}, you must change the network in your wallet."
 msgstr "Gagal berpindah jaringan dari Antarmuka Uniswap. Untuk menggunakan Uniswap pada {0}, Anda harus mengubah jaringan di dompet Anda."
 
 #: src/components/NavBar/MenuDropdown.tsx
@@ -1957,7 +1957,7 @@ msgid "Top pools"
 msgstr "Kolam atas"
 
 #: src/pages/Tokens/index.tsx
-msgid "Top tokens on Uniswap"
+msgid "Top tokens on Thera ECOSYSTEM"
 msgstr "Token teratas di Uniswap"
 
 #: src/components/earn/PoolCard.tsx

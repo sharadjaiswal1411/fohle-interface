@@ -8,11 +8,12 @@ import { Row } from 'nft/components/Flex'
 import { UniIcon } from 'nft/components/icons'
 import { ReactNode } from 'react'
 import { NavLink, NavLinkProps, useLocation, useNavigate } from 'react-router-dom'
+import { useIsDarkMode } from 'state/user/hooks'
 import styled from 'styled-components/macro'
 
 import { Bag } from './Bag'
 import { ChainSelector } from './ChainSelector'
-import { MenuDropdown } from './MenuDropdown'
+//import { MenuDropdown } from './MenuDropdown'
 import { SearchBar } from './SearchBar'
 import * as styles from './style.css'
 
@@ -50,14 +51,14 @@ export const PageTabs = () => {
   const { chainId: connectedChainId } = useWeb3React()
   const chainName = chainIdToBackendName(connectedChainId)
 
-  const isPoolActive =
-    pathname.startsWith('/pool') ||
-    pathname.startsWith('/add') ||
-    pathname.startsWith('/remove') ||
-    pathname.startsWith('/increase') ||
-    pathname.startsWith('/find')
+  // const isPoolActive =
+  //   pathname.startsWith("/pool") ||
+  //   pathname.startsWith("/add") ||
+  //   pathname.startsWith("/remove") ||
+  //   pathname.startsWith("/increase") ||
+  //   pathname.startsWith("/find");
 
-  const isNftPage = useIsNftPage()
+  //const isNftPage = useIsNftPage();
 
   return (
     <>
@@ -67,11 +68,9 @@ export const PageTabs = () => {
       <MenuItem href={`/tokens/${chainName.toLowerCase()}`} isActive={pathname.startsWith('/tokens')}>
         <Trans>Tokens</Trans>
       </MenuItem>
-      <MenuItem dataTestId="nft-nav" href="/nfts" isActive={isNftPage}>
-        <Trans>NFTs</Trans>
-      </MenuItem>
-      <MenuItem href="/pool" id="pool-nav-link" isActive={isPoolActive}>
-        <Trans>Pool</Trans>
+
+      <MenuItem href={`/pools/${chainName.toLowerCase()}`} isActive={pathname.startsWith('/pool')}>
+        <Trans> Pools</Trans>
       </MenuItem>
     </>
   )
@@ -80,6 +79,7 @@ export const PageTabs = () => {
 const Navbar = () => {
   const isNftPage = useIsNftPage()
   const navigate = useNavigate()
+  const isDarkMode = useIsDarkMode()
 
   return (
     <>
@@ -88,10 +88,7 @@ const Navbar = () => {
           <Box className={styles.leftSideContainer}>
             <Box className={styles.logoContainer}>
               <UniIcon
-                width="48"
-                height="48"
-                data-testid="uniswap-logo"
-                className={styles.logo}
+                darkMode={isDarkMode}
                 onClick={() => {
                   navigate({
                     pathname: '/',
@@ -109,17 +106,17 @@ const Navbar = () => {
               <PageTabs />
             </Row>
           </Box>
-          <Box className={styles.searchContainer}>
+          {/*         <Box className={styles.searchContainer}>
             <SearchBar />
-          </Box>
+          </Box>*/}
           <Box className={styles.rightSideContainer}>
             <Row gap="12">
               <Box position="relative" display={{ sm: 'flex', xl: 'none' }}>
                 <SearchBar />
               </Box>
-              <Box display={{ sm: 'none', lg: 'flex' }}>
+              {/*     <Box display={{ sm: 'none', lg: 'flex' }}>
                 <MenuDropdown />
-              </Box>
+              </Box>*/}
               {isNftPage && <Bag />}
               {!isNftPage && (
                 <Box display={{ sm: 'none', lg: 'flex' }}>

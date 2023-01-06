@@ -1,7 +1,9 @@
 import { createSlice, nanoid } from '@reduxjs/toolkit'
 import { DEFAULT_TXN_DISMISS_MS } from 'constants/misc'
+import { NetworkInfo } from 'constants/networks'
 
 import { SupportedChainId } from '../../constants/chains'
+import { EthereumNetworkInfo } from '../../constants/networks'
 
 export type PopupContent =
   | {
@@ -45,6 +47,7 @@ export interface ApplicationState {
   readonly fiatOnramp: { available: boolean; availabilityChecked: boolean }
   readonly openModal: ApplicationModal | null
   readonly popupList: PopupList
+  readonly activeNetworkVersion: NetworkInfo
 }
 
 const initialState: ApplicationState = {
@@ -52,6 +55,7 @@ const initialState: ApplicationState = {
   chainId: null,
   openModal: null,
   popupList: [],
+  activeNetworkVersion: EthereumNetworkInfo,
 }
 
 const applicationSlice = createSlice({
@@ -64,6 +68,10 @@ const applicationSlice = createSlice({
     updateChainId(state, action) {
       const { chainId } = action.payload
       state.chainId = chainId
+    },
+    updateActiveNetworkVersion(state, action) {
+      const { activeNetworkVersion } = action.payload
+      state.activeNetworkVersion = activeNetworkVersion
     },
     setOpenModal(state, action) {
       state.openModal = action.payload

@@ -22,6 +22,17 @@ const ButtonOverlay = styled.div`
   width: 100%;
 `
 
+const HoverIcon = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  :hover {
+    cursor: pointer;
+    opacity: 0.6;
+  }
+`
+
 type BaseButtonProps = {
   padding?: string
   width?: string

@@ -95,7 +95,7 @@ const Tokens = () => {
       <ExploreContainer>
         <TitleContainer>
           <ThemedText.LargeHeader>
-            <Trans>Top tokens on Uniswap</Trans>
+            <Trans>Top tokens on Thera ECOSYSTEM</Trans>
           </ThemedText.LargeHeader>
         </TitleContainer>
         <FiltersWrapper>

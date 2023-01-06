@@ -1,3 +1,8 @@
+import ARBITRUM_LOGO_URL from '../assets/images/arbitrum.svg'
+import CELO_LOGO_URL from '../assets/images/celo-logo.svg'
+import ETHEREUM_LOGO_URL from '../assets/images/ethereum-logo.png'
+import OPTIMISM_LOGO_URL from '../assets/images/optimism.svg'
+import POLYGON_LOGO_URL from '../assets/images/polygon-logo.png'
 import { SupportedChainId } from './chains'
 
 const INFURA_KEY = process.env.REACT_APP_INFURA_KEY
@@ -79,6 +84,10 @@ export const FALLBACK_URLS: { [key in SupportedChainId]: string[] } = {
     // "Safe" URLs
     'https://goerli.optimism.io',
   ],
+  [SupportedChainId.OPTIMISTIC_KOVAN]: [
+    // "Safe" URLs
+    'https://kovan.optimism.io',
+  ],
   [SupportedChainId.CELO]: [
     // "Safe" URLs
     `https://forno.celo.org`,
@@ -116,6 +125,10 @@ export const RPC_URLS: { [key in SupportedChainId]: string[] } = {
     `https://optimism-goerli.infura.io/v3/${INFURA_KEY}`,
     ...FALLBACK_URLS[SupportedChainId.OPTIMISM_GOERLI],
   ],
+  [SupportedChainId.OPTIMISTIC_KOVAN]: [
+    `https://kovan-goerli.infura.io/v3/${INFURA_KEY}`,
+    ...FALLBACK_URLS[SupportedChainId.OPTIMISTIC_KOVAN],
+  ],
   [SupportedChainId.ARBITRUM_ONE]: [
     `https://arbitrum-mainnet.infura.io/v3/${INFURA_KEY}`,
     ...FALLBACK_URLS[SupportedChainId.ARBITRUM_ONE],
@@ -135,3 +148,83 @@ export const RPC_URLS: { [key in SupportedChainId]: string[] } = {
   [SupportedChainId.CELO]: FALLBACK_URLS[SupportedChainId.CELO],
   [SupportedChainId.CELO_ALFAJORES]: FALLBACK_URLS[SupportedChainId.CELO_ALFAJORES],
 }
+
+export enum SupportedNetwork {
+  ETHEREUM,
+  ARBITRUM,
+  OPTIMISM,
+  POLYGON,
+  CELO,
+}
+
+export type NetworkInfo = {
+  id: SupportedNetwork
+  route: string
+  name: string
+  imageURL: string
+  bgColor: string
+  primaryColor: string
+  secondaryColor: string
+  blurb?: string
+  chainId?: number
+}
+
+export const EthereumNetworkInfo: NetworkInfo = {
+  id: SupportedNetwork.ETHEREUM,
+  route: '',
+  name: 'Ethereum',
+  bgColor: '#fc077d',
+  primaryColor: '#fc077d',
+  secondaryColor: '#2172E5',
+  imageURL: ETHEREUM_LOGO_URL,
+  chainId: SupportedChainId.MAINNET,
+}
+
+export const ArbitrumNetworkInfo: NetworkInfo = {
+  id: SupportedNetwork.ARBITRUM,
+  route: 'arbitrum',
+  name: 'Arbitrum',
+  imageURL: ARBITRUM_LOGO_URL,
+  bgColor: '#0A294B',
+  primaryColor: '#0490ED',
+  secondaryColor: '#96BEDC',
+}
+
+export const OptimismNetworkInfo: NetworkInfo = {
+  id: SupportedNetwork.OPTIMISM,
+  route: 'optimism',
+  name: 'Optimism',
+  bgColor: '#F01B36',
+  primaryColor: '#F01B36',
+  secondaryColor: '#FB7876',
+  imageURL: OPTIMISM_LOGO_URL,
+}
+
+export const PolygonNetworkInfo: NetworkInfo = {
+  id: SupportedNetwork.POLYGON,
+  route: 'polygon',
+  name: 'Polygon',
+  bgColor: '#8247e5',
+  primaryColor: '#8247e5',
+  secondaryColor: '#FB7876',
+  imageURL: POLYGON_LOGO_URL,
+  blurb: '',
+  chainId: SupportedChainId.POLYGON,
+}
+export const CeloNetworkInfo: NetworkInfo = {
+  id: SupportedNetwork.CELO,
+  route: 'celo',
+  name: 'Celo',
+  bgColor: '#02502F',
+  primaryColor: '#35D07F',
+  secondaryColor: '#9ACDB2',
+  imageURL: CELO_LOGO_URL,
+  blurb: '',
+}
+
+export const SUPPORTED_NETWORK_VERSIONS: NetworkInfo[] = [
+  EthereumNetworkInfo,
+  PolygonNetworkInfo,
+  OptimismNetworkInfo,
+  CeloNetworkInfo,
+]

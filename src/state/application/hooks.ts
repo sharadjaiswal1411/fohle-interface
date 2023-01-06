@@ -1,9 +1,24 @@
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { sendAnalyticsEvent } from '@uniswap/analytics'
+import {
+  arbitrumBlockClient,
+  arbitrumClient,
+  blockClient,
+  celoBlockClient,
+  celoClient,
+  client,
+  optimismBlockClient,
+  optimismClient,
+  polygonBlockClient,
+  polygonClient,
+} from 'apollo/client'
 import { DEFAULT_TXN_DISMISS_MS } from 'constants/misc'
+import { NetworkInfo, SupportedNetwork } from 'constants/networks'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 import { AppState } from '../index'
+import { updateActiveNetworkVersion } from './actions'
 import {
   addPopup,
   ApplicationModal,
@@ -155,7 +170,13 @@ export function useAddPopup(): (content: PopupContent, key?: string, removeAfter
 
   return useCallback(
     (content: PopupContent, key?: string, removeAfterMs?: number) => {
-      dispatch(addPopup({ content, key, removeAfterMs: removeAfterMs ?? DEFAULT_TXN_DISMISS_MS }))
+      dispatch(
+        addPopup({
+          content,
+          key,
+          removeAfterMs: removeAfterMs ?? DEFAULT_TXN_DISMISS_MS,
+        })
+      )
     },
     [dispatch]
   )
@@ -176,4 +197,68 @@ export function useRemovePopup(): (key: string) => void {
 export function useActivePopups(): AppState['application']['popupList'] {
   const list = useAppSelector((state: AppState) => state.application.popupList)
   return useMemo(() => list.filter((item) => item.show), [list])
+}
+
+// Get all required subgraph clients
+export function useClients(): {
+  dataClient: ApolloClient<NormalizedCacheObject>
+  blockClient: ApolloClient<NormalizedCacheObject>
+} {
+  const dataClient = useDataClient()
+  const blockClient = useBlockClient()
+  return {
+    dataClient,
+    blockClient,
+  }
+}
+
+// returns a function that allows adding a popup
+export function useActiveNetworkVersion(): [NetworkInfo, (activeNetworkVersion: NetworkInfo) => void] {
+  const dispatch = useAppDispatch()
+  const activeNetwork = useAppSelector((state: AppState) => state.application.activeNetworkVersion)
+  const update = useCallback(
+    (activeNetworkVersion: NetworkInfo) => {
+      dispatch(updateActiveNetworkVersion({ activeNetworkVersion }))
+    },
+    [dispatch]
+  )
+  return [activeNetwork, update]
+}
+
+// get the apollo client related to the active network
+function useDataClient(): ApolloClient<NormalizedCacheObject> {
+  const [activeNetwork] = useActiveNetworkVersion()
+  switch (activeNetwork.id) {
+    case SupportedNetwork.ETHEREUM:
+      return client
+    case SupportedNetwork.ARBITRUM:
+      return arbitrumClient
+    case SupportedNetwork.OPTIMISM:
+      return optimismClient
+    case SupportedNetwork.POLYGON:
+      return polygonClient
+    case SupportedNetwork.CELO:
+      return celoClient
+    default:
+      return client
+  }
+}
+
+// get the apollo client related to the active network for fetching blocks
+function useBlockClient(): ApolloClient<NormalizedCacheObject> {
+  const [activeNetwork] = useActiveNetworkVersion()
+  switch (activeNetwork.id) {
+    case SupportedNetwork.ETHEREUM:
+      return blockClient
+    case SupportedNetwork.ARBITRUM:
+      return arbitrumBlockClient
+    case SupportedNetwork.OPTIMISM:
+      return optimismBlockClient
+    case SupportedNetwork.POLYGON:
+      return polygonBlockClient
+    case SupportedNetwork.CELO:
+      return celoBlockClient
+    default:
+      return blockClient
+  }
 }

@@ -35,6 +35,7 @@ import Pool from './Pool'
 import { PositionPage } from './Pool/PositionPage'
 import PoolV2 from './Pool/v2'
 import PoolFinder from './PoolFinder'
+import Pools from './Pools'
 import RemoveLiquidity from './RemoveLiquidity'
 import RemoveLiquidityV3 from './RemoveLiquidity/V3'
 import Swap from './Swap'
@@ -42,6 +43,8 @@ import { RedirectPathToSwapOnly } from './Swap/redirects'
 import Tokens from './Tokens'
 
 const TokenDetails = lazy(() => import('./TokenDetails'))
+const PoolDetails = lazy(() => import('./PoolDetails'))
+
 const Vote = lazy(() => import('./Vote'))
 const NftExplore = lazy(() => import('nft/pages/explore'))
 const Collection = lazy(() => import('nft/pages/collection'))
@@ -109,6 +112,8 @@ function getCurrentPageFromLocation(locationPathname: string): PageName | undefi
       return PageName.POOL_PAGE
     case locationPathname.startsWith('/tokens'):
       return PageName.TOKENS_PAGE
+    case locationPathname.startsWith('/pools'):
+      return PageName.POOL_PAGE
     case locationPathname.startsWith('/nfts/profile'):
       return PageName.NFT_PROFILE_PAGE
     case locationPathname.startsWith('/nfts/asset'):
@@ -202,7 +207,15 @@ export default function App() {
                 <Route path="tokens" element={<Tokens />}>
                   <Route path=":chainName" />
                 </Route>
+
+                <Route path="pools" element={<Pools />}>
+                  <Route path=":chainName" />
+                </Route>
+
+                <Route path="pools/:chainName/:tokenAddress" element={<PoolDetails />} />
+
                 <Route path="tokens/:chainName/:tokenAddress" element={<TokenDetails />} />
+
                 <Route
                   path="vote/*"
                   element={

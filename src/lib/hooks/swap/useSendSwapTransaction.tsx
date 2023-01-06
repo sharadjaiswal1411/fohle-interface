@@ -46,6 +46,9 @@ export default function useSendSwapTransaction(
     if (!trade || !provider || !account || !chainId) {
       return { callback: null }
     }
+
+    console.log('swapCallsswapCalls', swapCalls)
+
     return {
       callback: async function onSwap(): Promise<TransactionResponse> {
         const estimatedCalls: SwapCallEstimate[] = await Promise.all(
@@ -77,11 +80,18 @@ export default function useSendSwapTransaction(
                   .call(tx)
                   .then((result) => {
                     console.debug('Unexpected successful call after failed estimate gas', call, gasError, result)
-                    return { call, error: <Trans>Unexpected issue with estimating the gas. Please try again.</Trans> }
+                    return {
+                      call,
+                      error: <Trans>Unexpected issue with estimating the gas. Please try again.</Trans>,
+                    }
                   })
                   .catch((callError) => {
+                    alert(5)
                     console.debug('Call threw error', call, callError)
-                    return { call, error: swapErrorToUserReadableMessage(callError) }
+                    return {
+                      call,
+                      error: swapErrorToUserReadableMessage(callError),
+                    }
                   })
               })
           })
@@ -121,10 +131,15 @@ export default function useSendSwapTransaction(
           .then((response) => {
             sendAnalyticsEvent(
               EventName.SWAP_SIGNED,
-              formatSwapSignedAnalyticsEventProperties({ trade, txHash: response.hash })
+              formatSwapSignedAnalyticsEventProperties({
+                trade,
+                txHash: response.hash,
+              })
             )
             if (calldata !== response.data) {
-              sendAnalyticsEvent(EventName.SWAP_MODIFIED_IN_WALLET, { txHash: response.hash })
+              sendAnalyticsEvent(EventName.SWAP_MODIFIED_IN_WALLET, {
+                txHash: response.hash,
+              })
               throw new InvalidSwapError(
                 t`Your swap was modified through your wallet. If this was a mistake, please cancel immediately or risk losing your funds.`
               )

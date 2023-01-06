@@ -1,11 +1,12 @@
 import { rootCssString } from 'nft/css/cssStringFromTheme'
 import React, { useMemo } from 'react'
-import { createGlobalStyle, css, ThemeProvider as StyledComponentsThemeProvider } from 'styled-components/macro'
+import { Text, TextProps } from 'rebass'
+import styled, { createGlobalStyle, css, ThemeProvider as StyledComponentsThemeProvider } from 'styled-components/macro'
 
 import { useIsDarkMode } from '../state/user/hooks'
 import { darkTheme, lightTheme } from './colors'
 import { darkDeprecatedTheme, lightDeprecatedTheme } from './deprecatedColors'
-
+import { Colors } from './styled'
 // todo - remove and replace imports with a new path
 export * from './components'
 export * from './components/text'
@@ -17,9 +18,9 @@ export const MEDIA_WIDTHS = {
   deprecated_upToLarge: 1280,
 }
 
-const deprecated_mediaWidthTemplates: { [width in keyof typeof MEDIA_WIDTHS]: typeof css } = Object.keys(
-  MEDIA_WIDTHS
-).reduce((acc, size) => {
+const deprecated_mediaWidthTemplates: {
+  [width in keyof typeof MEDIA_WIDTHS]: typeof css
+} = Object.keys(MEDIA_WIDTHS).reduce((acc, size) => {
   acc[size] = (a: any, b: any, c: any) => css`
     @media (max-width: ${(MEDIA_WIDTHS as any)[size]}px) {
       ${css(a, b, c)}
@@ -125,3 +126,57 @@ export const ThemedGlobalStyle = createGlobalStyle`
     ${({ theme }) => rootCssString(theme.darkMode)}
   }
 `
+const TextWrapper = styled(Text)<{ color: keyof Colors }>`
+  color: ${({ color, theme }) => (theme as any)[color]};
+`
+
+export const TYPE = {
+  main(props: TextProps) {
+    return <TextWrapper fontWeight={500} color="text2" {...props} />
+  },
+  link(props: TextProps) {
+    return <TextWrapper fontWeight={500} color="primary1" {...props} />
+  },
+  label(props: TextProps) {
+    return <TextWrapper fontWeight={500} color="white" {...props} />
+  },
+  black(props: TextProps) {
+    return <TextWrapper fontWeight={500} color="text1" {...props} />
+  },
+  white(props: TextProps) {
+    return <TextWrapper fontWeight={500} color="white" {...props} />
+  },
+  body(props: TextProps) {
+    return <TextWrapper fontWeight={400} fontSize={16} color="text1" {...props} />
+  },
+  largeHeader(props: TextProps) {
+    return <TextWrapper fontWeight={600} fontSize={24} color="text1" {...props} />
+  },
+  mediumHeader(props: TextProps) {
+    return <TextWrapper fontWeight={500} fontSize={20} color="text3" {...props} />
+  },
+  subHeader(props: TextProps) {
+    return <TextWrapper fontWeight={400} fontSize={14} {...props} />
+  },
+  small(props: TextProps) {
+    return <TextWrapper fontWeight={500} fontSize={11} {...props} />
+  },
+  blue(props: TextProps) {
+    return <TextWrapper fontWeight={500} color="blue1" {...props} />
+  },
+  yellow(props: TextProps) {
+    return <TextWrapper fontWeight={500} color="yellow3" {...props} />
+  },
+  darkGray(props: TextProps) {
+    return <TextWrapper fontWeight={500} color="text3" {...props} />
+  },
+  gray(props: TextProps) {
+    return <TextWrapper fontWeight={500} color="bg3" {...props} />
+  },
+  italic(props: TextProps) {
+    return <TextWrapper fontWeight={500} fontSize={12} fontStyle="italic" color="text2" {...props} />
+  },
+  error({ error, ...props }: { error: boolean } & TextProps) {
+    return <TextWrapper fontWeight={500} color={error ? 'red1' : 'text2'} {...props} />
+  },
+}

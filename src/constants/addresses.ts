@@ -61,7 +61,7 @@ export const MULTICALL_ADDRESS: AddressMap = {
 }
 
 export const SWAP_ROUTER_ADDRESSES: AddressMap = {
-  ...constructSameAddressMap('0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45', [
+  ...constructSameAddressMap('0xB88A815dF3AA84b055a28151A7C267851AFb08B1', [
     SupportedChainId.OPTIMISM,
     SupportedChainId.OPTIMISM_GOERLI,
     SupportedChainId.ARBITRUM_ONE,
@@ -103,7 +103,7 @@ export const ARGENT_WALLET_DETECTOR_ADDRESS: AddressMap = {
 }
 
 export const QUOTER_ADDRESSES: AddressMap = {
-  ...constructSameAddressMap('0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6', [
+  ...constructSameAddressMap('0x7DA4a5012b61eE08f434D1d26b26793F6a049034', [
     SupportedChainId.OPTIMISM,
     SupportedChainId.OPTIMISM_GOERLI,
     SupportedChainId.ARBITRUM_ONE,
@@ -116,7 +116,7 @@ export const QUOTER_ADDRESSES: AddressMap = {
 }
 
 export const NONFUNGIBLE_POSITION_MANAGER_ADDRESSES: AddressMap = {
-  ...constructSameAddressMap('0xC36442b4a4522E871399CD717aBDD847Ab11FE88', [
+  ...constructSameAddressMap('0x00D4aEE5eB8d73e027b5EBeeFcAbe3f6Fc94c06F', [
     SupportedChainId.OPTIMISM,
     SupportedChainId.OPTIMISM_GOERLI,
     SupportedChainId.ARBITRUM_ONE,
