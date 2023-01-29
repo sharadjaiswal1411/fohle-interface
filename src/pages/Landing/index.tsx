@@ -5,7 +5,6 @@ import { AboutFooter } from 'components/About/AboutFooter'
 import Card, { CardType } from 'components/About/Card'
 import { MAIN_CARDS, MORE_CARDS } from 'components/About/constants'
 import { BaseButton } from 'components/Button'
-import Swap from 'pages/Swap'
 import { parse } from 'qs'
 import { useEffect, useRef, useState } from 'react'
 import { ArrowDownCircle } from 'react-feather'
@@ -254,17 +253,6 @@ const LandingSwapContainer = styled.div`
   align-items: center;
 `
 
-const LandingSwap = styled(Swap)`
-  * {
-    pointer-events: none;
-  }
-
-  &:hover {
-    border: 1px solid ${({ theme }) => theme.accentAction};
-    transform: translateY(-4px);
-  }
-`
-
 const Link = styled(NativeLink)`
   text-decoration: none;
   max-width: 480px;
@@ -297,17 +285,7 @@ export default function Landing() {
     <Trace page={PageName.LANDING_PAGE} shouldLogImpression>
       {showContent && (
         <PageContainer isDarkMode={isDarkMode} data-testid="landing-page">
-          <LandingSwapContainer>
-            <TraceEvent
-              events={[BrowserEvent.onClick]}
-              name={EventName.ELEMENT_CLICKED}
-              element={ElementName.LANDING_PAGE_SWAP_ELEMENT}
-            >
-              <Link to="/swap">
-                <LandingSwap />
-              </Link>
-            </TraceEvent>
-          </LandingSwapContainer>
+          <LandingSwapContainer></LandingSwapContainer>
           <Gradient isDarkMode={isDarkMode} />
           <GlowContainer>
             <Glow />

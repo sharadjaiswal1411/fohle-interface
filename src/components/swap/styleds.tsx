@@ -10,7 +10,7 @@ import { AutoColumn } from '../Column'
 
 export const PageWrapper = styled.div`
   padding: 68px 8px 0px;
-  max-width: 480px;
+  max-width: 90%;
   width: 100%;
 
   @media only screen and (max-width: ${({ theme }) => `${theme.breakpoint.md}px`}) {
@@ -22,18 +22,64 @@ export const PageWrapper = styled.div`
   }
 `
 
+export const SwapPanel = styled.div`
+  display: flex;
+  justify-content: center;
+  @media only screen and (max-width: ${({ theme }) => `${theme.breakpoint.md}px`}) {
+    display: block;
+  }
+
+  @media only screen and (max-width: ${({ theme }) => `${theme.breakpoint.sm}px`}) {
+    display: block;
+  }
+`
+
 // Mostly copied from `AppBody` but it was getting too hard to maintain backwards compatibility.
-export const SwapWrapper = styled.main`
+export const ChartWrapper = styled.main`
   position: relative;
+  background: transparent;
+  border-radius: 16px;
+  border: none;
+  padding: 8px;
+  width: 70%;
+  z-index: ${Z_INDEX.deprecated_content};
+  transition: transform 250ms ease;
+  margin-left: 5px;
+
+  @media only screen and (max-width: ${({ theme }) => `${theme.breakpoint.md}px`}) {
+    width: 100%;
+    margin-left: 0px;
+  }
+
+  @media only screen and (max-width: ${({ theme }) => `${theme.breakpoint.sm}px`}) {
+    width: 100%;
+    margin-left: 0px;
+  }
+`
+export const SwapWrapperContent = styled.main`
   background: ${({ theme }) => theme.backgroundSurface};
   border-radius: 16px;
   border: 1px solid ${({ theme }) => theme.backgroundOutline};
   padding: 8px;
+  padding-bottom: 30px;
   z-index: ${Z_INDEX.deprecated_content};
   transition: transform 250ms ease;
 
   &:hover {
     border: 1px solid ${({ theme }) => theme.backgroundOutline};
+  }
+`
+// Mostly copied from `AppBody` but it was getting too hard to maintain backwards compatibility.
+export const SwapWrapper = styled.main`
+  position: relative;
+  width: 30%;
+
+  @media only screen and (max-width: ${({ theme }) => `${theme.breakpoint.md}px`}) {
+    width: 100%;
+  }
+
+  @media only screen and (max-width: ${({ theme }) => `${theme.breakpoint.sm}px`}) {
+    width: 100%;
   }
 `
 

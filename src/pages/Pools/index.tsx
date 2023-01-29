@@ -3,9 +3,7 @@ import { Trace } from '@uniswap/analytics'
 import { PageName } from '@uniswap/analytics-events'
 import { useWeb3React } from '@web3-react/core'
 import { ButtonPrimary } from 'components/Button'
-import NetworkFilter from 'components/Pools/PoolTable/NetworkFilter'
 import PoolTable from 'components/Pools/PoolTable/PoolTable'
-import SearchBar from 'components/Pools/PoolTable/SearchBar'
 import { sortAscendingAtom, sortMethodAtom } from 'components/Pools/state'
 import { MAX_WIDTH_MEDIA_BREAKPOINT, MEDIUM_MEDIA_BREAKPOINT } from 'components/Tokens/constants'
 import { filterStringAtom } from 'components/Tokens/state'
@@ -160,11 +158,9 @@ const Pools = () => {
           </ThemedText.LargeHeader>
         </TitleContainer>
         <FiltersWrapper>
-          <FiltersContainer>
-            <NetworkFilter />
-          </FiltersContainer>
+          <FiltersContainer>{/*<NetworkFilter />*/}</FiltersContainer>
           <SearchContainer>
-            <SearchBar />
+            {/*<SearchBar />*/}
             <ResponsiveButtonPrimary data-cy="join-pool-button" id="join-pool-button" as={Link} to="/add/ETH">
               + <Trans>Create New</Trans>
             </ResponsiveButtonPrimary>

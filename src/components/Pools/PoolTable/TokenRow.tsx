@@ -236,17 +236,6 @@ const IconLoadingBubble = styled(LoadingBubble)`
   width: 24px;
 `
 
-const L2NetworkLogo = styled.div<{ networkUrl?: string; size?: string }>`
-  height: ${({ size }) => size ?? '12px'};
-  width: ${({ size }) => size ?? '12px'};
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  background: url(${({ networkUrl }) => networkUrl});
-  background-repeat: no-repeat;
-  background-size: ${({ size }) => (size ? `${size} ${size}` : '12px 12px')};
-  display: ${({ networkUrl }) => !networkUrl && 'none'};
-`
 const LogoContainer = styled.div`
   position: relative;
   align-items: center;

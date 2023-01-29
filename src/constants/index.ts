@@ -40,3 +40,5 @@ export const POOL_HIDE: { [key: string]: string[] } = {
   [SupportedNetwork.OPTIMISM]: [],
   [SupportedNetwork.CELO]: [],
 }
+
+export const COINGECKO_API_URL = 'https://api.coingecko.com/api/v3/coins'

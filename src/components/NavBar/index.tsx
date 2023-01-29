@@ -65,10 +65,10 @@ export const PageTabs = () => {
       <MenuItem href="/swap" isActive={pathname.startsWith('/swap')}>
         <Trans>Swap</Trans>
       </MenuItem>
-      <MenuItem href={`/tokens/${chainName.toLowerCase()}`} isActive={pathname.startsWith('/tokens')}>
+      {/*  <MenuItem href={`/tokens/${chainName.toLowerCase()}`} isActive={pathname.startsWith('/tokens')}>
         <Trans>Tokens</Trans>
       </MenuItem>
-
+*/}
       <MenuItem href={`/pools/${chainName.toLowerCase()}`} isActive={pathname.startsWith('/pool')}>
         <Trans> Pools</Trans>
       </MenuItem>
@@ -111,7 +111,7 @@ const Navbar = () => {
           </Box>*/}
           <Box className={styles.rightSideContainer}>
             <Row gap="12">
-              <Box position="relative" display={{ sm: 'flex', xl: 'none' }}>
+              <Box position="relative" display={{ sm: 'none', xl: 'none' }}>
                 <SearchBar />
               </Box>
               {/*     <Box display={{ sm: 'none', lg: 'flex' }}>

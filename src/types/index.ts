@@ -10,17 +10,6 @@ export enum VolumeWindow {
   monthly,
 }
 
-interface ChartDayData {
-  date: number
-  volumeUSD: number
-  tvlUSD: number
-}
-
-interface GenericChartEntry {
-  time: string
-  value: number
-}
-
 export type Transaction = {
   type: TransactionType
   hash: string

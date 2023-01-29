@@ -23,11 +23,10 @@ import { useParams } from 'react-router-dom'
 import { useActiveNetworkVersion } from 'state/application/hooks'
 import { usePoolChartData, usePoolDatas, usePoolTransactions } from 'state/pools/hooks'
 import styled from 'styled-components/macro'
-import { StyledInternalLink, TYPE } from 'theme'
+import { TYPE } from 'theme'
 import { ThemedText } from 'theme'
 import { feeTierPercent } from 'utils'
 import { unixToDate } from 'utils/date'
-import { networkPrefix } from 'utils/networkPrefix'
 import { formatAmount, formatDollarAmount } from 'utils/numbers'
 
 import { ExternalLink as StyledExternalLink } from '../../theme/components'
@@ -172,30 +171,27 @@ export default function PoolDetails() {
                 )}
               </RowFixed>
               <ResponsiveRow>
-                <StyledInternalLink to={'/tokens' + networkPrefix(activeNetwork) + poolData.token0.address}>
-                  <TokenButton>
-                    <RowFixed>
-                      <CurrencyLogo address={poolData.token0.address} size="20px" />
-                      <TYPE.label fontSize="16px" ml="4px" style={{ whiteSpace: 'nowrap' }} width="fit-content">
-                        {`1 ${poolData.token0.symbol} =  ${formatAmount(poolData.token1Price, 4)} ${
-                          poolData.token1.symbol
-                        }`}
-                      </TYPE.label>
-                    </RowFixed>
-                  </TokenButton>
-                </StyledInternalLink>
-                <StyledInternalLink to={'/tokens' + networkPrefix(activeNetwork) + poolData.token1.address}>
-                  <TokenButton ml="10px">
-                    <RowFixed>
-                      <CurrencyLogo address={poolData.token1.address} size="20px" />
-                      <TYPE.label fontSize="16px" ml="4px" style={{ whiteSpace: 'nowrap' }} width="fit-content">
-                        {`1 ${poolData.token1.symbol} =  ${formatAmount(poolData.token0Price, 4)} ${
-                          poolData.token0.symbol
-                        }`}
-                      </TYPE.label>
-                    </RowFixed>
-                  </TokenButton>
-                </StyledInternalLink>
+                <TokenButton>
+                  <RowFixed>
+                    <CurrencyLogo address={poolData.token0.address} size="20px" />
+                    <TYPE.label fontSize="16px" ml="4px" style={{ whiteSpace: 'nowrap' }} width="fit-content">
+                      {`1 ${poolData.token0.symbol} =  ${formatAmount(poolData.token1Price, 4)} ${
+                        poolData.token1.symbol
+                      }`}
+                    </TYPE.label>
+                  </RowFixed>
+                </TokenButton>
+
+                <TokenButton ml="10px">
+                  <RowFixed>
+                    <CurrencyLogo address={poolData.token1.address} size="20px" />
+                    <TYPE.label fontSize="16px" ml="4px" style={{ whiteSpace: 'nowrap' }} width="fit-content">
+                      {`1 ${poolData.token1.symbol} =  ${formatAmount(poolData.token0Price, 4)} ${
+                        poolData.token0.symbol
+                      }`}
+                    </TYPE.label>
+                  </RowFixed>
+                </TokenButton>
               </ResponsiveRow>
             </AutoColumn>
             {activeNetwork !== PolygonNetworkInfo ? null : (

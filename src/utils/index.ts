@@ -10,7 +10,7 @@ import {
   OptimismNetworkInfo,
   PolygonNetworkInfo,
 } from 'constants/networks'
-
+import Numeral from 'numeral'
 // returns the checksummed address if the address is valid, otherwise returns false
 export function isAddress(value: any): string | false {
   try {
@@ -20,6 +20,12 @@ export function isAddress(value: any): string | false {
   } catch {
     return false
   }
+}
+
+export const toKInChart = (num: string, unit?: string) => {
+  if (parseFloat(num) < 0.0000001) return `< ${unit ?? ''}0.0000001`
+  if (parseFloat(num) >= 0.1) return (unit ?? '') + Numeral(num).format('0.[00]a')
+  return (unit ?? '') + Numeral(num).format('0.[0000000]a')
 }
 
 const ETHERSCAN_PREFIXES: { [chainId: number]: string } = {

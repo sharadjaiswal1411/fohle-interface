@@ -9,6 +9,7 @@ import { ReactNode, useCallback, useEffect, useMemo } from 'react'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { InterfaceTrade, TradeState } from 'state/routing/types'
 import { useUserSlippageToleranceWithDefault } from 'state/user/hooks'
+import { supportedChainId } from 'utils/supportedChainId'
 
 import { TOKEN_SHORTHANDS } from '../../constants/tokens'
 import { useCurrency } from '../../hooks/Tokens'
@@ -19,7 +20,6 @@ import { useCurrencyBalances } from '../connection/hooks'
 import { AppState } from '../index'
 import { Field, replaceSwapState, selectCurrency, setRecipient, switchCurrencies, typeInput } from './actions'
 import { SwapState } from './reducer'
-
 export function useSwapState(): AppState['swap'] {
   return useAppSelector((state) => state.swap)
 }
@@ -257,8 +257,13 @@ export function useDefaultsFromURLSearch(): SwapState {
 
   useEffect(() => {
     if (!chainId) return
+
+    const chain = supportedChainId(chainId)
+
+    if (!chain) return
+
     const inputCurrencyId = parsedSwapState[Field.INPUT].currencyId ?? undefined
-    const outputCurrencyId = parsedSwapState[Field.OUTPUT].currencyId ?? undefined
+    const outputCurrencyId = parsedSwapState[Field.OUTPUT].currencyId ?? TOKEN_SHORTHANDS['USDC']?.[chain]
 
     dispatch(
       replaceSwapState({
