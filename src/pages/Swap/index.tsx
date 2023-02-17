@@ -388,10 +388,6 @@ export default function Swap({ className }: { className?: string }) {
     }
   }, [approvalState, approvalSubmitted])
 
-  const handleRotateClick = useCallback(() => {
-    setApprovalSubmitted(false) // reset 2 step UI for approvals
-    onSwitchTokens()
-  }, [onSwitchTokens])
   const maxInputAmount: CurrencyAmount<Currency> | undefined = useMemo(
     () => maxAmountSpend(currencyBalances[Field.INPUT]),
     [currencyBalances]
@@ -907,7 +903,7 @@ export default function Swap({ className }: { className?: string }) {
               </SwapWrapperContent>
             </SwapWrapper>
             <ChartWrapper className={className}>
-              <LiveChart onRotateClick={handleRotateClick} currencies={currencies} />
+              <LiveChart currencies={currencies} />
             </ChartWrapper>
           </SwapPanel>
         </PageWrapper>

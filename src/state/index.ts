@@ -4,6 +4,7 @@ import multicall from 'lib/state/multicall'
 import { load, save } from 'redux-localstorage-simple'
 import { isTestEnv } from 'utils/env'
 
+import geckoTerminalApi from '../services/geckoTermial'
 import application from './application/reducer'
 import burn from './burn/reducer'
 import burnV3 from './burn/v3/reducer'
@@ -38,12 +39,14 @@ const store = configureStore({
     multicall: multicall.reducer,
     lists,
     logs,
+    [geckoTerminalApi.reducerPath]: geckoTerminalApi.reducer,
     [routingApi.reducerPath]: routingApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ thunk: true })
       .concat(routingApi.middleware)
-      .concat(save({ states: PERSISTED_KEYS, debounce: 1000 })),
+      .concat(save({ states: PERSISTED_KEYS, debounce: 1000 }))
+      .concat(geckoTerminalApi.middleware),
   preloadedState: load({ states: PERSISTED_KEYS, disableWarnings: isTestEnv() }),
 })
 

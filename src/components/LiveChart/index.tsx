@@ -1,18 +1,21 @@
 import { Trans } from '@lingui/macro'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
 import Loader from 'components/Loader'
+import TradingViewChart from 'components/TradingViewChart'
 import useBasicChartData, { LiveDataTimeframeEnum } from 'hooks/useBasicChartData'
 import useTheme from 'hooks/useTheme'
 import React, { useEffect, useMemo, useState } from 'react'
 import { isMobile } from 'react-device-detect'
-import { Repeat } from 'react-feather'
 import { Flex, Text } from 'rebass'
+import { useGeckoTerminalSearchQuery, useGetPoolDetailQuery } from 'services/geckoTermial'
+import { Field } from 'state/swap/actions'
 import styled from 'styled-components/macro'
 import { unwrappedToken } from 'utils/unwrappedToken'
 
 import AnimatingNumber from './AnimatingNumber'
 import CircleInfoIcon from './CircleInfoIcon'
 import LineChart from './LineChart'
+import ProChartToggle from './ProChartToggle'
 import WarningIcon from './WarningIcon'
 
 const LiveChartWrapper = styled.div`
@@ -44,19 +47,6 @@ const TimeFrameButton = styled.div<{ active?: boolean }>`
   `}
 `
 
-const SwitchButtonWrapper = styled.div`
-  display: flex;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  cursor: pointer;
-  align-items: center;
-  justify-content: center;
-  &:hover {
-    background-color: ${({ theme }) => theme.textSecondary};
-  }
-`
-
 const getDifferentValues = (chartData: any, hoverValue: number | null) => {
   if (chartData && chartData.length > 0) {
     const firstValue = chartData[0].value
@@ -64,13 +54,13 @@ const getDifferentValues = (chartData: any, hoverValue: number | null) => {
     const differentValue = hoverValue !== null ? hoverValue - lastValue : lastValue - firstValue
     const compareValue = hoverValue !== null ? lastValue : firstValue
     return {
-      chartColor: lastValue - firstValue >= 0 ? '#4C82FB' : '#4C82FB',
+      chartColor: lastValue - firstValue >= 0 ? '#31CB9E' : '#FF537B',
       different: differentValue.toPrecision(6),
       differentPercent: compareValue === 0 ? 100 : ((differentValue / compareValue) * 100).toFixed(2),
     }
   }
   return {
-    chartColor: '#4C82FB',
+    chartColor: '#31CB9E',
     different: 0,
     differentPercent: 0,
   }
@@ -93,26 +83,81 @@ const getTimeFrameText = (timeFrame: LiveDataTimeframeEnum) => {
   }
 }
 
-function LiveChart({ currencies, onRotateClick }: { currencies: any; onRotateClick?: () => void }) {
+function LiveChart({ currencies }: { currencies: any }) {
+  const isSolana = false
   const theme = useTheme()
+
+  const { data: dataToken0, isLoading: prochartLoading1 } = useGeckoTerminalSearchQuery(
+    currencies[Field.INPUT]?.wrapped.address || ''
+  )
+  const { data: dataToken1, isLoading: prochartLoading2 } = useGeckoTerminalSearchQuery(
+    currencies[Field.OUTPUT]?.wrapped.address || ''
+  )
+  const prochartLoading = prochartLoading1 || prochartLoading2
+
+  const pools0 = (dataToken0?.data?.attributes?.pools || [])
+    .filter((p) => p?.tokens?.length === 2)
+    .reduce((acc, cur) => ({ ...acc, [cur.address]: true }), {} as { [key: string]: boolean })
+  const availablePools = (dataToken1?.data?.attributes?.pools || [])
+    .filter((p) => pools0[p.address])
+    .sort((a, b) => +b?.reserve_in_usd - +a?.reserve_in_usd)
+
+  let poolAddress = availablePools[0]?.address
+  let network = availablePools[0]?.network?.identifier
+
+  // in case 2 api search is not match, we get pool by symbol
+  if (!poolAddress) {
+    const pools0 = (dataToken0?.data?.attributes?.pools || [])
+      .filter((p) => {
+        if (p?.tokens?.length !== 2) return false
+        const token0 = p?.tokens?.[0]?.symbol
+        const token1 = p?.tokens?.[1]?.symbol
+
+        const symbol0 = currencies[Field.INPUT]?.wrapped.symbol
+        const symbol1 = currencies[Field.OUTPUT]?.wrapped.symbol
+        return (token0 === symbol0 && token1 === symbol1) || (token0 === symbol1 && token1 === symbol0)
+      })
+      .sort((a, b) => +b?.reserve_in_usd - +a?.reserve_in_usd)
+
+    const pools1 = (dataToken1?.data?.attributes?.pools || [])
+      .filter((p) => {
+        if (p?.tokens?.length !== 2) return false
+        const token0 = p?.tokens?.[0]?.symbol
+        const token1 = p?.tokens?.[1]?.symbol
+
+        const symbol0 = currencies[Field.INPUT]?.wrapped.symbol
+        const symbol1 = currencies[Field.OUTPUT]?.wrapped.symbol
+        return (token0 === symbol0 && token1 === symbol1) || (token0 === symbol1 && token1 === symbol0)
+      })
+      .sort((a, b) => +b?.reserve_in_usd - +a?.reserve_in_usd)
+
+    poolAddress = pools0?.[0]?.address || pools1?.[0]?.address
+    network = pools0?.[0]?.network?.identifier || pools1?.[0]?.network?.identifier
+  }
+
+  const { data: poolDetail } = useGetPoolDetailQuery(
+    { poolAddress: poolAddress || '', network },
+    {
+      skip: !poolAddress,
+    }
+  )
+
   const nativeInputCurrency = currencies.INPUT ? unwrappedToken(currencies.INPUT || undefined) : undefined
   const nativeOutputCurrency = currencies.OUTPUT ? unwrappedToken(currencies.OUTPUT || undefined) : undefined
+
   const tokens = useMemo(() => {
     return [nativeInputCurrency, nativeOutputCurrency].map((currency) => currency?.wrapped)
   }, [nativeInputCurrency, nativeOutputCurrency])
 
   const isWrappedToken = !!tokens[0]?.address && tokens[0]?.address === tokens[1]?.address
+  const isUnwrapingWSOL = isSolana && isWrappedToken && currencies[Field.INPUT]?.isToken
   const [hoverValue, setHoverValue] = useState<number | null>(null)
   const [timeFrame, setTimeFrame] = useState<LiveDataTimeframeEnum>(LiveDataTimeframeEnum.DAY)
-  const [stateProChart, setStateProChart] = useState({
-    hasProChart: false,
-    pairAddress: '',
-    apiVersion: '',
-    loading: true,
-  })
+
   const { data: chartData, error: basicChartError, loading: basicChartLoading } = useBasicChartData(tokens, timeFrame)
-  const isProchartError = !stateProChart.hasProChart && !stateProChart.loading
+  const isProchartError = !poolAddress
   const isBasicchartError = basicChartError && !basicChartLoading
+  const bothChartError = isProchartError && isBasicchartError
 
   useEffect(() => {
     if (hoverValue !== null) {
@@ -121,16 +166,17 @@ function LiveChart({ currencies, onRotateClick }: { currencies: any; onRotateCli
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chartData])
 
-  useEffect(() => {
-    if (!currencies.INPUT || !currencies.OUTPUT) return
-    setStateProChart({ hasProChart: false, pairAddress: '', apiVersion: '', loading: true })
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(currencies)])
-
   const showingValue = hoverValue ?? (chartData[chartData.length - 1]?.value || 0)
 
   const { chartColor, different, differentPercent } = getDifferentValues(chartData, hoverValue)
+
+  const [isManualChange, setIsManualChange] = useState(false)
+  const [isShowProChart, setIsShowProChart] = useState(false)
+
+  useEffect(() => {
+    if (!!poolAddress && !isManualChange) setIsShowProChart(true)
+    if (!prochartLoading && !poolAddress) setIsShowProChart(false)
+  }, [isShowProChart, isManualChange, poolAddress, prochartLoading])
 
   const renderTimeframes = () => {
     return (
@@ -146,6 +192,25 @@ function LiveChart({ currencies, onRotateClick }: { currencies: any; onRotateCli
     )
   }
 
+  const toggle = useMemo(() => {
+    return (
+      <ProChartToggle
+        activeName={isShowProChart ? 'pro' : 'basic'}
+        toggle={(name: string) => {
+          if (!bothChartError && name !== (isShowProChart ? 'pro' : 'basic')) {
+            setIsManualChange(true)
+            setIsShowProChart((prev) => !prev)
+          }
+        }}
+        buttons={[
+          { name: 'basic', title: 'Basic', disabled: isBasicchartError },
+          { name: 'pro', title: 'Pro', disabled: isProchartError },
+        ]}
+      />
+    )
+  }, [isBasicchartError, isProchartError, isShowProChart, bothChartError])
+
+  const isReverse = poolDetail?.included?.[0]?.attributes?.symbol === nativeOutputCurrency?.wrapped?.symbol
   return (
     <LiveChartWrapper>
       {isWrappedToken ? (
@@ -155,15 +220,19 @@ function LiveChart({ currencies, onRotateClick }: { currencies: any; onRotateCli
           alignItems="center"
           justifyContent="center"
           color={theme.textPrimary}
-          style={{ gap: '16px' }}
+          sx={{ gap: '16px' }}
         >
           <CircleInfoIcon />
           <Text fontSize={16} textAlign="center">
-            <Trans>
-              You can swap {nativeInputCurrency?.symbol} for {nativeOutputCurrency?.symbol} (and vice versa)
-              <br />
-              Exchange rate is always 1 to 1.
-            </Trans>
+            {isUnwrapingWSOL ? (
+              <Trans>You can only swap all WSOL to SOL</Trans>
+            ) : (
+              <Trans>
+                You can swap {nativeInputCurrency?.symbol} for {nativeOutputCurrency?.symbol} (and vice versa)
+              </Trans>
+            )}
+            <br />
+            <Trans>Exchange rate is always 1 to 1.</Trans>
           </Text>
         </Flex>
       ) : (
@@ -186,87 +255,91 @@ function LiveChart({ currencies, onRotateClick }: { currencies: any; onRotateCli
                     {nativeOutputCurrency?.symbol}
                   </Text>
                 </Flex>
-                <SwitchButtonWrapper onClick={onRotateClick}>
-                  <Repeat size={14} />
-                </SwitchButtonWrapper>
               </Flex>
             </Flex>
-            {!isMobile && renderTimeframes()}
+            <Flex flex={1} justifyContent="flex-end">
+              {toggle}
+            </Flex>
           </Flex>
 
-          <>
-            <Flex justifyContent="space-between" alignItems="flex-start" marginTop="12px">
-              <Flex flexDirection="column" alignItems="flex-start">
-                {showingValue === 0 || basicChartError ? (
-                  <Text fontSize={28} color={theme.textPrimary}>
-                    --
-                  </Text>
-                ) : (
-                  <AnimatingNumber
-                    value={showingValue}
-                    symbol={nativeOutputCurrency?.symbol}
-                    fontSize={isMobile ? 24 : 28}
-                  />
-                )}
-                <Flex marginTop="2px">
+          {isShowProChart && !!poolDetail && (
+            <>
+              <TradingViewChart poolDetail={poolDetail} tokenId={poolDetail.included[isReverse ? 1 : 0].id} />
+            </>
+          )}
+
+          {!isShowProChart && (
+            <>
+              <Flex justifyContent="space-between" alignItems="flex-start" marginTop="12px">
+                <Flex flexDirection="column" alignItems="flex-start">
                   {showingValue === 0 || basicChartError ? (
-                    <Text fontSize={12} color={theme.textTertiary}>
+                    <Text fontSize={28} color={theme.textPrimary}>
                       --
                     </Text>
                   ) : (
-                    <>
-                      <Text
-                        fontSize={12}
-                        color={different >= 0 ? theme.accentSuccess : theme.accentCritical}
-                        marginRight="5px"
-                      >
-                        {different} ({differentPercent}%)
+                    <AnimatingNumber
+                      value={showingValue}
+                      symbol={nativeOutputCurrency?.symbol}
+                      fontSize={isMobile ? 24 : 28}
+                    />
+                  )}
+                  <Flex marginTop="2px">
+                    {showingValue === 0 || basicChartError ? (
+                      <Text fontSize={12} color={theme.textPrimary}>
+                        --
                       </Text>
-                      {!hoverValue && (
-                        <Text fontSize={12} color={theme.textTertiary}>
-                          {getTimeFrameText(timeFrame)}
-                        </Text>
-                      )}
-                    </>
-                  )}
-                </Flex>
-              </Flex>
-            </Flex>
-            {isMobile && renderTimeframes()}
-            <div style={{ flex: 1, marginTop: '12px' }}>
-              {basicChartLoading || isBasicchartError ? (
-                <Flex
-                  minHeight={isMobile ? '300px' : '370px'}
-                  flexDirection="column"
-                  alignItems="center"
-                  justifyContent="center"
-                  color={theme.textTertiary}
-                  style={{ gap: '16px' }}
-                >
-                  {basicChartLoading ? (
-                    <Loader />
-                  ) : (
-                    isBasicchartError && (
+                    ) : (
                       <>
-                        <WarningIcon />
-                        <Text fontSize={16}>
-                          <Trans>Chart is unavailable right now</Trans>
+                        <Text fontSize={12} color={different >= 0 ? '#31CB9E' : '#FF537B'} marginRight="5px">
+                          {different} ({differentPercent}%)
                         </Text>
+                        {!hoverValue && (
+                          <Text fontSize={12} color={theme.textTertiary}>
+                            {getTimeFrameText(timeFrame)}
+                          </Text>
+                        )}
                       </>
-                    )
-                  )}
+                    )}
+                  </Flex>
                 </Flex>
-              ) : (
-                <LineChart
-                  data={chartData}
-                  setHoverValue={setHoverValue}
-                  color={chartColor}
-                  timeFrame={timeFrame}
-                  minHeight={370}
-                />
-              )}
-            </div>
-          </>
+                {!isMobile && renderTimeframes()}
+              </Flex>
+              {isMobile && renderTimeframes()}
+              <div style={{ flex: 1, marginTop: '12px' }}>
+                {basicChartLoading || prochartLoading || isBasicchartError ? (
+                  <Flex
+                    minHeight={isMobile ? '300px' : '370px'}
+                    flexDirection="column"
+                    alignItems="center"
+                    justifyContent="center"
+                    color={theme.textTertiary}
+                    style={{ gap: '16px' }}
+                  >
+                    {basicChartLoading ? (
+                      <Loader />
+                    ) : (
+                      isBasicchartError && (
+                        <>
+                          <WarningIcon />
+                          <Text fontSize={16}>
+                            <Trans>Chart is unavailable right now</Trans>
+                          </Text>
+                        </>
+                      )
+                    )}
+                  </Flex>
+                ) : (
+                  <LineChart
+                    data={chartData}
+                    setHoverValue={setHoverValue}
+                    color={chartColor}
+                    timeFrame={timeFrame}
+                    minHeight={370}
+                  />
+                )}
+              </div>
+            </>
+          )}
         </>
       )}
     </LiveChartWrapper>

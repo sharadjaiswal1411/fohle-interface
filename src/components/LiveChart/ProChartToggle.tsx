@@ -1,12 +1,11 @@
-import { useEffect, useRef, useState } from 'react'
-import styled from 'styled-components'
-
 import useTheme from 'hooks/useTheme'
+import { useEffect, useRef, useState } from 'react'
+import styled from 'styled-components/macro'
 
 const ToggleButton = styled.span<{ size?: string; element?: HTMLSpanElement }>`
   position: absolute;
   transition: all 0.2s ease;
-  background-color: ${({ theme }) => theme.tabActive};
+  background-color: ${({ theme }) => theme.textPrimary};
   ${({ element }) => `
     transform: translateX(${element?.offsetLeft ?? 55}px);
     width: ${element?.offsetWidth || 44}px;
@@ -33,7 +32,8 @@ const ToggleElement = styled.span<{
 
   z-index: 1;
   transition: all 0.2s ease;
-  color: ${({ theme, isActive, disabled }) => (isActive ? theme.text : disabled ? theme.buttonGray : theme.subText)};
+  color: ${({ theme, isActive, disabled }) =>
+    isActive ? theme.backgroundSurface : disabled ? theme.white : theme.textPrimary};
   cursor: ${({ disabled }) => (disabled ? 'inherit' : 'pointer')};
 `
 
@@ -48,12 +48,13 @@ const ToggleWrapper = styled.button<{ size?: string; border?: boolean; backgroun
   padding: 0;
 `
 
-export interface IToggleButton {
+interface IToggleButton {
   name: string
   title: string
   disabled?: boolean
 }
-export interface ProChartToggleProps {
+
+interface ProChartToggleProps {
   id?: string
   activeName?: string
   buttons?: IToggleButton[]
@@ -86,13 +87,13 @@ export default function ProChartToggle({
       id={id}
       size={size}
       border={border}
-      background={`${theme.tabBackgound}${buttons.some((b: any) => b.disabled) ? '20' : ''}`}
+      background={`${theme.backgroundSurface}${buttons.some((b: any) => b.disabled) ? '20' : ''}`}
     >
-      {buttons.map(button => {
+      {buttons.map((button) => {
         return (
           <ToggleElement
             key={button.name}
-            ref={el => {
+            ref={(el) => {
               buttonsRef.current[button.name] = el
             }}
             isActive={activeName === button.name}

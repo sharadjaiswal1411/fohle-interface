@@ -386,6 +386,7 @@ export type NftCollectionTraitStats = {
 
 export type NftCollectionsFilterInput = {
   addresses?: InputMaybe<Array<Scalars['String']>>;
+  nameQuery?: InputMaybe<Scalars['String']>;
 };
 
 export type NftContract = IContract & {
@@ -514,7 +515,6 @@ export type Portfolio = {
   tokenBalances?: Maybe<Array<Maybe<TokenBalance>>>;
   tokensTotalDenominatedValue?: Maybe<Amount>;
   tokensTotalDenominatedValueChange?: Maybe<AmountChange>;
-  tokensTotalDenominatedValueHistory?: Maybe<Array<Maybe<TimestampedAmount>>>;
 };
 
 
@@ -525,11 +525,6 @@ export type PortfolioAssetActivitiesArgs = {
 
 
 export type PortfolioTokensTotalDenominatedValueChangeArgs = {
-  duration?: InputMaybe<HistoryDuration>;
-};
-
-
-export type PortfolioTokensTotalDenominatedValueHistoryArgs = {
   duration?: InputMaybe<HistoryDuration>;
 };
 
